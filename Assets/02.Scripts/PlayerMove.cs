@@ -13,8 +13,12 @@ public class PlayerMove : MonoBehaviour
     // 2. '캐릭터가 바라보는 방향'을 기준으로 방향구하기
     // 3. 이동하기 
     public float MoveSpeed = 5f;
-    public float Stamina;
-    public const float MAX_STAMINA = 10f;
+    public float Stamina = 100f;
+    public float RunSpeed = 10;
+    public float StaminaConsumeSpeed = 33f;
+    public float StaminaChargeSpeed = 50f;
+
+    public const float MAX_STAMINA = 100;
 
     private void Start()
     {
@@ -33,21 +37,28 @@ public class PlayerMove : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (Input.GetKey(KeyCode.LeftShift) && Stamina > 0)
+        float speed = RunSpeed;
+
+        if (Input.GetKey(KeyCode.LeftShift))
         {
-            MoveSpeed = 10f;
-            Stamina -= 3f * Time.fixedDeltaTime;
+
+            if (Stamina > 0)
+            {
+                Stamina -= StaminaConsumeSpeed * Time.fixedDeltaTime;
+                speed = RunSpeed;
+            }
         }
-        else if (Stamina < 10f)
+        else if (Stamina < 100f)
         {
-            Stamina += 7f * Time.fixedDeltaTime;
+            Stamina += StaminaChargeSpeed * Time.fixedDeltaTime;
             MoveSpeed = 5f;
         }
         else
         {
             MoveSpeed = 5f;
         }
+        Mathf.Clamp(Stamina, 0f, MAX_STAMINA);
 
-        //Debug.Log(Stamina);
+        Debug.Log(Stamina);
     }
 }   

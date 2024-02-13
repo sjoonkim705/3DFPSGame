@@ -6,17 +6,19 @@ using UnityEngine.UI;
 
 public class StaminaSlider : MonoBehaviour
 {
-    public float stamina;
+    public float Stamina;
     public float MaxStamina;
     public GameObject Player;
     private PlayerMove _playerMove;
-    private Slider mySlider;
+
+    [Header ("Slider")]
+    private Slider StaminaSliderUI;
 
     void Start()
     {
         _playerMove = Player.GetComponent<PlayerMove>();
-        mySlider = GetComponent<Slider>();
-        stamina = _playerMove.Stamina;
+        StaminaSliderUI = GetComponent<Slider>();
+        Stamina = _playerMove.Stamina;
         MaxStamina = PlayerMove.MAX_STAMINA;
         
 
@@ -24,8 +26,8 @@ public class StaminaSlider : MonoBehaviour
 
     void Update()
     {
-        stamina = _playerMove.Stamina;
-        mySlider.value = stamina/MaxStamina;
-        Debug.Log(mySlider.value);
+        Stamina = _playerMove.Stamina;
+        StaminaSliderUI.value = Stamina/MaxStamina;
+        //Debug.Log($"{});
     }
 }
