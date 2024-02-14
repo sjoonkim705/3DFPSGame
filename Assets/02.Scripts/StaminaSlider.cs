@@ -19,7 +19,7 @@ public class StaminaSlider : MonoBehaviour
         _playerMove = Player.GetComponent<PlayerMove>();
         StaminaSliderUI = GetComponent<Slider>();
         Stamina = _playerMove.Stamina;
-        MaxStamina = PlayerMove.MAX_STAMINA;
+        MaxStamina = PlayerMove.MaxStamina;
         
 
     }
