@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,12 +18,38 @@ public class PlayerMove : MonoBehaviour
     public const float MaxStamina = 100;    // 스태미나 최대량
     public float StaminaConsumeSpeed = 33f; // 초당 스태미나 소모량
     public float StaminaChargeSpeed = 50;  // 초당 스태미나 충전량
+    private bool _isJumping = false;
+    private int JumpMaxCount = 2;
+    private int JumpRemainCount;
+    private bool _isFalling = false;
 
 
     [Header("스태미나 슬라이더 UI")]
     public Slider StaminaSliderUI;
-
     private CharacterController _characterController;
+
+    // 목표 : 스페이스바를 누르면 캐릭터르 점프하고 싶다.
+    // 필요 속성:
+    // - 점프 파워 값
+    public float JumpPower = 10f;
+
+    // 점프 구현
+    // 1. 만약에 [SpaceBar]를 누르면..
+    
+    // 2. 플레이어에게 y축에 있어 점프 파워를 적용한다.
+
+
+    // 목표 : 캐릭터에 중력을 적용하고 싶다.
+
+    // 필요 속성:
+    // 중력 값
+    private float _gravity = -20;
+    // 누적할 중력 변수
+    private float _yVelocity = 0f;
+    // 구현 순서
+    // 1. 중력 가속도가 누적된다.
+    // 2. 플레이어에게 y축에 있어 중력을 적용한다.
+
 
     private void Awake()
     {
@@ -32,6 +59,7 @@ public class PlayerMove : MonoBehaviour
     private void Start()
     {
         Stamina = MaxStamina;
+        _characterController.minMoveDistance = 0;
     }
 
     // 구현 순서
@@ -81,7 +109,35 @@ public class PlayerMove : MonoBehaviour
         }
 
         Stamina = Mathf.Clamp(Stamina, 0, 100);
-        StaminaSliderUI.value = Stamina / MaxStamina;  // 0 ~ 1;//
+        StaminaSliderUI.value = Stamina / MaxStamina;  
+
+        if (_characterController.isGrounded)
+        {
+            JumpRemainCount = JumpMaxCount;
+            _isJumping = false;
+            _isFalling = false;
+            _yVelocity = 0;
+        }
+
+        if (!_characterController.isGrounded && !_isJumping)
+        {
+            _isFalling = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) && (JumpRemainCount > 0) && _isFalling == false)
+            {
+                _yVelocity = JumpPower;
+                _isJumping = true;
+                JumpRemainCount--;
+            }
+
+        // 3-1. 중력 가속도 계산
+        // 1. 중력 가속도가 누적된다.
+
+        _yVelocity += _gravity * Time.deltaTime;
+
+        // 2. 플레이어에게 y축에 있어 중력을 적용한다.
+        dir.y = _yVelocity;
 
         // 3. 이동하기
         // transform.position += speed * dir * Time.deltaTime;

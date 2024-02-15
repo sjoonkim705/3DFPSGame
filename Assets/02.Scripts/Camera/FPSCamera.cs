@@ -27,10 +27,6 @@ public class FPSCamera : MonoBehaviour
     // 1. 캐릭터의 눈 위치로 카메라를 이동시킨다.
 
 
-
-
-
-
     private void Start()
     {
         // 마우스 커서 없애고, 고정
@@ -50,9 +46,6 @@ public class FPSCamera : MonoBehaviour
             // 1. 캐릭터의 눈 위치로 카메라를 이동시킨다.
             transform.position = Target.position;
         }
-
-
-
         // 1. 마우스 입력(drag) 받는다.
         float mouseX = Input.GetAxis("Mouse X"); // 방향에 따라 -1 ~ 1 사이의 값 반환 
         float mouseY = Input.GetAxis("Mouse Y");
