@@ -11,15 +11,7 @@ public class Bomb : MonoBehaviour
     { 
         _bombRigid = GetComponent<Rigidbody>();
     }
-    private void OnEnable()
-    {
-        _bombRigid.velocity = Vector3.zero;
 
-    }
-    private void Init()
-    {
-        
-    }
     private void OnCollisionEnter(Collision collision)
     {
         if (!collision.collider.CompareTag("Player"))

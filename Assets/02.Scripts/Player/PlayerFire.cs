@@ -18,17 +18,17 @@ public class PlayerFire : MonoBehaviour
     public int BombLeft;
     public int MaxBombNumber = 3;
     public Text BombLeftUI;
-    private List<GameObject> _bombPool;
+    public List<GameObject> BombPool;
 
     void Start()
     {
 
         BombLeft = MaxBombNumber;
-        _bombPool = new List<GameObject>();
+        BombPool = new List<GameObject>();
         for (int i = 0;  i<MaxBombNumber ;i++ )
         {
             GameObject bomb = GameObject.Instantiate(BombPrefeb);
-            _bombPool.Add(bomb);
+            BombPool.Add(bomb);
             bomb.SetActive(false);
 
         }
@@ -56,17 +56,18 @@ public class PlayerFire : MonoBehaviour
 
             // 1. 꺼져 있는 총알을 찾아 꺼낸다.
             GameObject selectedBomb = null;
-            foreach (GameObject b in _bombPool)
+            foreach (GameObject b in BombPool)
             {
-                if (b.gameObject.activeInHierarchy == false)
+                if (b.activeInHierarchy == false)
                 {
                     selectedBomb = b;
                     break; // 찾았기 때문에 그 뒤까지 찾을 필요가 없다.
                 }
             }
         selectedBomb.SetActive(true);
-        Rigidbody rigidBody = selectedBomb.GetComponent<Rigidbody>();
-        rigidBody.AddForce(Camera.main.transform.forward * 30, ForceMode.Impulse);
+        Rigidbody bombRigid = selectedBomb.GetComponent<Rigidbody>();
+        bombRigid.velocity = Vector3.zero;
+        bombRigid.AddForce(Camera.main.transform.forward * 30, ForceMode.Impulse);
         selectedBomb.transform.position = FirePosition.position;
 
     }
