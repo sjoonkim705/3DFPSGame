@@ -17,11 +17,14 @@ public class PlayerMove : MonoBehaviour
     public float Stamina = 100;             // 스태미나
     public const float MaxStamina = 100;    // 스태미나 최대량
     public float StaminaConsumeSpeed = 33f; // 초당 스태미나 소모량
-    public float StaminaChargeSpeed = 50;  // 초당 스태미나 충전량
+    public float StaminaChargeSpeed = 50f;  // 초당 스태미나 충전량
+    public float ClimbingWallConsumeSpeed = 50f;
     private bool _isJumping = false;
     private int JumpMaxCount = 2;
     private int JumpRemainCount;
     private bool _isFalling = false;
+    private bool _isRunning = false;
+
 
 
     [Header("스태미나 슬라이더 UI")]
@@ -50,6 +53,14 @@ public class PlayerMove : MonoBehaviour
     // 1. 중력 가속도가 누적된다.
     // 2. 플레이어에게 y축에 있어 중력을 적용한다.
 
+    // 목표: 벽에 닿아 있는 상태에서 스페이스바를 누르면 벽타기를 하고 싶다.
+    // 필요 속성:
+    public float ClimbingPower;
+    public bool _isClimbing = false;
+    // 구현 순서
+
+   
+
 
     private void Awake()
     {
@@ -66,9 +77,38 @@ public class PlayerMove : MonoBehaviour
     // 1. 키 입력 받기
     // 2. '캐릭터가 바라보는 방향'을 기준으로 방향구하기
     // 3. 이동하기
+    void ClimbWall()
+    {
+        _yVelocity = 0f;
+        _yVelocity = ClimbingPower;
+        Stamina -= ClimbingWallConsumeSpeed * Time.deltaTime;
 
+    }
     void Update()
     {
+        // 1. 만약 벽에 닿아 있는데
+/*        if(_characterController.collisionFlags == CollisionFlags.Sides)
+        {*/
+            // 2. [SpaceBar]를 버튼을 누르고 있으면
+            if (Input.GetKey(KeyCode.Space) && (Stamina > 0) && (_characterController.collisionFlags == CollisionFlags.Sides) && !_isFalling)
+            {
+                _isClimbing = true;
+                Debug.Log("Climbing");
+            }
+            else
+            {
+                _isClimbing = false;
+            }
+ /*       }
+*/
+        if (_isClimbing)
+        {
+            ClimbWall();
+            Debug.Log($"Stamina: {Stamina}");
+
+        }
+
+        // 3. 벽을 타겠다.
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             // FPS 카메라 모드로 전환
@@ -93,7 +133,8 @@ public class PlayerMove : MonoBehaviour
 
         // 실습 과제 1. Shift 누르고 있으면 빨리 뛰기
         float speed = MoveSpeed; // 5
-        if (Input.GetKey(KeyCode.LeftShift)) // 실습 과제 2. 스태미너 구현
+
+        if (Input.GetKey(KeyCode.LeftShift))
         {
             // - Shfit 누른 동안에는 스태미나가 서서히 소모된다. (3초)
             Stamina -= StaminaConsumeSpeed * Time.deltaTime; // 초당 33씩 소모
@@ -101,8 +142,14 @@ public class PlayerMove : MonoBehaviour
             {
                 speed = RunSpeed;
             }
+            _isRunning = true;
         }
         else
+        {
+            _isRunning = false;
+        }
+
+        if (_characterController.isGrounded && !_isRunning)
         {
             // - 아니면 스태미나가 소모 되는 속도보다 빠른 속도로 충전된다 (2초)
             Stamina += StaminaChargeSpeed * Time.deltaTime; // 초당 50씩 충전
@@ -118,6 +165,10 @@ public class PlayerMove : MonoBehaviour
             _isFalling = false;
             _yVelocity = 0;
         }
+
+        // Stamina -= StaminaConsumeSpeed * (_isClimbing ? 1.5f : 1) * Time.deltaTime;
+
+
 
         if (!_characterController.isGrounded && !_isJumping)
         {

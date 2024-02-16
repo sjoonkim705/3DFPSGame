@@ -7,6 +7,14 @@ using static UnityEditor.FilePathAttribute;
 // 1인칭 슈팅(First Person Shooter)
 public class FPSCamera : MonoBehaviour
 {
+
+    public static FPSCamera Instance;
+
+    private void Awake()
+    {
+        Instance = this; 
+    }
+
     // ** 카메라 회전 **
     // 목표: 마우스를 조작하면 카메라를 그 방향으로 회전시키고 싶다.
     // 필요 속성:
@@ -77,5 +85,11 @@ public class FPSCamera : MonoBehaviour
         // 1. 짐벌락 현상
         // 2. 0보다 작아지면 -1이 아닌 359(360-1)가 된다. (유니티 내부에서 이렇게 자동 연산)
         // 위 2번 문제 해결을 위해서 우리가 미리 연산을 해줘야 한다.
+    }
+
+    public void Shake()
+    {
+        _mx += Random.Range(-0.6f, 0.6f);
+        _my += Random.Range(-0.6f, 0.6f);
     }
 }
