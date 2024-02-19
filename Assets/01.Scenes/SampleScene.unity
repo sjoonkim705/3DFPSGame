@@ -362,6 +362,7 @@ MonoBehaviour:
   HitEffect: {fileID: 2104220076}
   MagazineCapacity: 30
   TotalBulletLeft: 150
+  FpsCamera: {fileID: 963194229}
   _magazineUI: {fileID: 445189489}
   _reloadingMsg: {fileID: 851163362}
   _reloadingTimeSlider: {fileID: 1990123243}

@@ -24,7 +24,10 @@ public class PlayerGunFire : MonoBehaviour
     // 4. Ray가 부딛힌 대상의 정보를 받아온다.
     // 5. 부딛힌 위치에 총알이 튀는 이펙트를 생성한다.
     private float _shotTimer = 0;
+    private float _reloadingTime = 1.5f;
     public const float COOL_TIME = 0.3f;
+    public FPSCamera FpsCamera;
+
     [SerializeField]
     private Text _magazineUI;
     [SerializeField]
@@ -40,8 +43,9 @@ public class PlayerGunFire : MonoBehaviour
         _reloadingCoroutine = null;
         _reloadingMsg.text = string.Empty;
         _bulletLeft = MagazineCapacity;
-        RefreshTextUI();
+        FpsCamera = CameraManager.Instance.GetComponent<FPSCamera>();
 
+        RefreshTextUI();
     }
 
     void Update()
@@ -79,7 +83,7 @@ public class PlayerGunFire : MonoBehaviour
     }
     private void Fire()
     {
-        FPSCamera.Instance.Shake();
+        FpsCamera.Shake();
 
         // 2. Ray를 생성하고, 위치와 방향을 설정한다.
         Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
@@ -110,10 +114,10 @@ public class PlayerGunFire : MonoBehaviour
         _reloadingTimeSlider.value = 0f;
         _reloadingMsg.text = $"Reloading";
         _isReloading = true;
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(_reloadingTime);
         FillMagazine();
         _isReloading = false;
-        _reloadingMsg.text = $"";
+        _reloadingMsg.text = string.Empty;
 
 
     }
