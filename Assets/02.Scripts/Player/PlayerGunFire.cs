@@ -97,15 +97,12 @@ public class PlayerGunFire : MonoBehaviour
         if (IsHit)
         {
             // 실습과제18. 레이저를 몬스터에게 맞출 시 몬스터 체력 닳는 기능 구현
-            if (hitInfo.collider.CompareTag("Monster"))
+            IHitable hitObject = hitInfo.collider.GetComponent<IHitable>();
+            if (hitObject != null)
             {
-                Monster monster = hitInfo.collider.GetComponent<Monster>();
-                if (monster != null)
-                {
-                    monster.Hit(Damage);
-                }
+                hitObject.Hit(Damage);
             }
-            
+
             HitEffect.gameObject.transform.position = hitInfo.point;
             HitEffect.gameObject.transform.forward = hitInfo.normal;
             HitEffect.Play();
