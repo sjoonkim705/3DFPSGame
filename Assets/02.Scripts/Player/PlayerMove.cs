@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -13,7 +14,7 @@ public class PlayerMove : MonoBehaviour
     // - 이동속도
     public float MoveSpeed = 5;     // 일반 속도
     public float RunSpeed = 10;    // 뛰는 속도
-
+    [Range(0,100)]
     public float Stamina = 100;             // 스태미나
     public const float MaxStamina = 100;    // 스태미나 최대량
     public float StaminaConsumeSpeed = 33f; // 초당 스태미나 소모량
@@ -24,9 +25,7 @@ public class PlayerMove : MonoBehaviour
     private int JumpRemainCount;
     private bool _isFalling = false;
     private bool _isRunning = false;
-
-
-
+    
     [Header("스태미나 슬라이더 UI")]
     public Slider StaminaSliderUI;
     private CharacterController _characterController;
@@ -58,8 +57,16 @@ public class PlayerMove : MonoBehaviour
     public float ClimbingPower;
     public bool _isClimbing = false;
     // 구현 순서
+    [Header("플레이어 체력 슬라이더 UI")]
+    public int Health;
+    public int MaxHealth = 100;
+    [SerializeField]
+    private Slider _healthSlider;
+    [SerializeField]
+    private Image _healthSliderFillArea;
 
-   
+
+
 
 
     private void Awake()
@@ -69,8 +76,11 @@ public class PlayerMove : MonoBehaviour
     }
     private void Start()
     {
+        Health = MaxHealth;
         Stamina = MaxStamina;
         _characterController.minMoveDistance = 0;
+        _healthSliderFillArea = _healthSliderFillArea.GetComponent<Image>();
+
     }
 
     // 구현 순서
@@ -86,6 +96,23 @@ public class PlayerMove : MonoBehaviour
     }
     void Update()
     {
+        _healthSlider.value = (float)Health / MaxHealth;
+        float sliderValue = _healthSlider.value;
+        //Image fillAreaColor = _healthSliderFillArea.GetComponent<Image>();
+        if (sliderValue > 0.7)
+        {
+            _healthSliderFillArea.color = Color.green;
+        }
+        else if (sliderValue > 0.3)
+        {
+            _healthSliderFillArea.color = Color.yellow;
+        }
+        else
+        {
+            _healthSliderFillArea.color = Color.red;
+        }
+
+
         // 1. 만약 벽에 닿아 있는데
 /*        if(_characterController.collisionFlags == CollisionFlags.Sides)
         {*/

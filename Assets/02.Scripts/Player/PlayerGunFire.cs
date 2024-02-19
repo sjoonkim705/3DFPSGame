@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class PlayerGunFire : MonoBehaviour
 {
+    public int Damage = 1;
     // 목표 : 마우스 왼쪽 버튼을 누르면 시선이 바라보는 방향으로 총을 발사하고 싶다.
     // 필요 속성
     // - 총알 튀는 이펙트 프리팹
@@ -58,7 +59,7 @@ public class PlayerGunFire : MonoBehaviour
             if (_reloadingCoroutine != null) // fire중이면 reloading Cancel
             {
                 StopCoroutine(_reloadingCoroutine);
-                _reloadingMsg.text = "";
+                _reloadingMsg.text = string.Empty;
                 _isReloading = false;
 
             }
@@ -70,11 +71,14 @@ public class PlayerGunFire : MonoBehaviour
         }
         else
         {
+            _reloadingMsg.text = string.Empty;
             _reloadingTimeSlider.gameObject.SetActive(false);
         }
+
         if (Input.GetKeyDown(KeyCode.R) && !_isReloading)
         {
             _reloadingTimeSlider.value = 0f;
+            _reloadingMsg.text = "Reloading..";
             _reloadingTimeSlider.gameObject.SetActive(true);
             _reloadingCoroutine = StartCoroutine(Reload_Coroutine());
         }
@@ -92,6 +96,16 @@ public class PlayerGunFire : MonoBehaviour
         bool IsHit = Physics.Raycast(ray, out hitInfo);
         if (IsHit)
         {
+            // 실습과제18. 레이저를 몬스터에게 맞출 시 몬스터 체력 닳는 기능 구현
+            if (hitInfo.collider.CompareTag("Monster"))
+            {
+                Monster monster = hitInfo.collider.GetComponent<Monster>();
+                if (monster != null)
+                {
+                    monster.Hit(Damage);
+                }
+            }
+            
             HitEffect.gameObject.transform.position = hitInfo.point;
             HitEffect.gameObject.transform.forward = hitInfo.normal;
             HitEffect.Play();
@@ -112,7 +126,7 @@ public class PlayerGunFire : MonoBehaviour
     private IEnumerator Reload_Coroutine()
     {
         _reloadingTimeSlider.value = 0f;
-        _reloadingMsg.text = $"Reloading";
+        _reloadingMsg.text = "Reloading...";
         _isReloading = true;
         yield return new WaitForSeconds(_reloadingTime);
         FillMagazine();
