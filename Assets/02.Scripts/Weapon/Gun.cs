@@ -17,6 +17,8 @@ public class Gun : MonoBehaviour
 
     // 발사 쿨타임
     public float CoolTime;
+    public Sprite ProfileImage;
+
 
 
     // 총알 갯수

@@ -17,6 +17,8 @@ public class PlayerBombFire : MonoBehaviour
     public float ThrowPower = 30;
     public int BombLeft;
     public int MaxBombNumber = 3;
+    public PlayerGunFire PlayerGunInfo;
+
     public List<GameObject> BombPool;
 
     [SerializeField]
@@ -38,14 +40,14 @@ public class PlayerBombFire : MonoBehaviour
     }
     private void RefreshUI()
     {
-        _bombLeftUI.text = $"Bomb {BombLeft} / {MaxBombNumber}";
+        _bombLeftUI.text = $"{BombLeft} / {MaxBombNumber}";
     }
 
 
     void Update()
     {
 
-        if (Input.GetMouseButtonDown(1) && BombLeft > 0)
+        if (Input.GetMouseButtonDown(1) && BombLeft > 0 && !PlayerGunInfo.GetZoomMode())
         {
             BombFire();
             BombLeft--;
