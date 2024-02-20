@@ -13,6 +13,8 @@ public class Drum : MonoBehaviour, IHitable
 
     public float BurstingExplosionRadius = 3f;
     public int Damage = 70;
+    public bool IsExploding = false;
+
 
     public void Start()
     {
@@ -30,26 +32,40 @@ public class Drum : MonoBehaviour, IHitable
     }
     public void BurstBarrel()
     {
+        IsExploding = true;
         int findLayer = LayerMask.GetMask("Player") | LayerMask.GetMask("Monster") | LayerMask.GetMask("Environment");
         Collider[] colliders = Physics.OverlapSphere(transform.position, BurstingExplosionRadius, findLayer);
 
 
         foreach (Collider collider in colliders)
         {
-            IHitable hitableObject = collider.GetComponent<IHitable>();
-            if (hitableObject != null)
+            IHitable hitableObject;
+            if (collider.TryGetComponent<IHitable>(out hitableObject))
             {
+                if (collider.CompareTag("Player") || collider.CompareTag("Monster"))
+                {
+                    hitableObject.Hit(Damage);
+                }
+                else if (collider.CompareTag("Barrel"))
+                {
+                    Drum aBarrel = collider.GetComponent<Drum>();
+                    if (aBarrel != null && !aBarrel.IsExploding)
+                    {
+                        aBarrel.BurstBarrel();
+                    }
+                }
             }
+   
         }
 
         BarrelExplodeEffect.gameObject.transform.position = transform.position;
         BarrelExplodeEffect.Play();
         BarrelRigid.AddForce(Vector3.up * _burstingForce, ForceMode.Impulse);
-        BarrelRigid.AddTorque(new Vector3(1,0,1) * _burstingForce/2);
-        StartCoroutine(ExplodeCoroutine());
+        BarrelRigid.AddTorque(new Vector3(Random.Range(0f,3f),0, Random.Range(0f,4f)) * _burstingForce/Random.Range(1f,3f));
+        StartCoroutine(DestroyCoroutine());
     }
 
-    private IEnumerator ExplodeCoroutine()
+    private IEnumerator DestroyCoroutine()
     {
         yield return new WaitForSeconds(_burstingTime);
         Destroy(gameObject);

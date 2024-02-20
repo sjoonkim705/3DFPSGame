@@ -37,10 +37,7 @@ public class PlayerMove : MonoBehaviour , IHitable
 
     // 점프 구현
     // 1. 만약에 [SpaceBar]를 누르면..
-    
     // 2. 플레이어에게 y축에 있어 점프 파워를 적용한다.
-
-
     // 목표 : 캐릭터에 중력을 적용하고 싶다.
 
     // 필요 속성:
@@ -124,7 +121,6 @@ public class PlayerMove : MonoBehaviour , IHitable
             if (Input.GetKey(KeyCode.Space) && (Stamina > 0) && (_characterController.collisionFlags == CollisionFlags.Sides) && !_isFalling)
             {
                 _isClimbing = true;
-                Debug.Log("Climbing");
             }
             else
             {
@@ -135,7 +131,6 @@ public class PlayerMove : MonoBehaviour , IHitable
         if (_isClimbing)
         {
             ClimbWall();
-            Debug.Log($"Stamina: {Stamina}");
 
         }
 

@@ -6,17 +6,20 @@ using UnityEngine.UI;
 
 public class PlayerGunFire : MonoBehaviour
 {
-    public int Damage = 1;
+
     // 목표 : 마우스 왼쪽 버튼을 누르면 시선이 바라보는 방향으로 총을 발사하고 싶다.
     // 필요 속성
+    private GunType _gtype;
+    public Gun CurrentGun;
+
     // - 총알 튀는 이펙트 프리팹
     public ParticleSystem HitEffect;
-    public int MagazineCapacity = 30;
-    private int _bulletLeft;
-    public int TotalBulletLeft = 150;
+
     private Coroutine _reloadingCoroutine;
     private bool _isReloading;
+    private float _shotTimer = 0;
 
+    public List<GameObject> SelectableGuns;
 
     // 구현 순서
     // 1. 만약에 마우스 왼쪽 버튼을 누르면
@@ -24,9 +27,9 @@ public class PlayerGunFire : MonoBehaviour
     // 3. Ray를 발사한다
     // 4. Ray가 부딛힌 대상의 정보를 받아온다.
     // 5. 부딛힌 위치에 총알이 튀는 이펙트를 생성한다.
-    private float _shotTimer = 0;
-    private float _reloadingTime = 1.5f;
-    public const float COOL_TIME = 0.3f;
+
+
+
     public FPSCamera FpsCamera;
 
     [SerializeField]
@@ -36,25 +39,59 @@ public class PlayerGunFire : MonoBehaviour
     [SerializeField]
     private Slider _reloadingTimeSlider;
 
+    void SetGunActive(GunType gunType)
+    {
+        int index = (int)gunType;
 
+        CurrentGun = SelectableGuns[index].GetComponent<Gun>();
+        SelectableGuns[index].SetActive(true);
+        for (int i=0;i< SelectableGuns.Count;i++)
+        {
+            if (i == index)
+            {
+                continue;
+            }
+            else
+            {
+                SelectableGuns[i].SetActive(false);
+            }
+        }
+    }
 
     private void Start()
     {
         _reloadingTimeSlider.gameObject.SetActive(false);
         _reloadingCoroutine = null;
         _reloadingMsg.text = string.Empty;
-        _bulletLeft = MagazineCapacity;
+        CurrentGun.BulletLeft = CurrentGun.MagazineCapacity;
         FpsCamera = CameraManager.Instance.GetComponent<FPSCamera>();
-
+        SetGunActive(GunType.Rifle);
+        //RefreshGun();
         RefreshTextUI();
     }
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SetGunActive(GunType.Rifle);
+            RefreshTextUI();
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        { 
+            SetGunActive(GunType.Sniper);
+            RefreshTextUI();
+        }        
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            SetGunActive(GunType.Pistol);
+            RefreshTextUI();
+        }
+
         // 구현 순서
         // 1. 만약에 마우스 왼쪽 버튼을 누르면
         _shotTimer += Time.deltaTime;
-        if (Input.GetMouseButton(0) && _shotTimer >= COOL_TIME && _bulletLeft > 0)
+        if (Input.GetMouseButton(0) && _shotTimer >= CurrentGun.CoolTime && CurrentGun.BulletLeft > 0)
         {
             if (_reloadingCoroutine != null) // fire중이면 reloading Cancel
             {
@@ -100,7 +137,7 @@ public class PlayerGunFire : MonoBehaviour
             IHitable hitObject = hitInfo.collider.GetComponent<IHitable>();
             if (hitObject != null)
             {
-                hitObject.Hit(Damage);
+                hitObject.Hit(CurrentGun.Damage);
             }
 
             HitEffect.gameObject.transform.position = hitInfo.point;
@@ -115,7 +152,7 @@ public class PlayerGunFire : MonoBehaviour
 
         // 5. 부딛힌 위치에 총알이 튀는 이펙트를 생성한다. 
         _shotTimer = 0f;
-        _bulletLeft--;
+        CurrentGun.BulletLeft--;
         RefreshTextUI();
 
     }
@@ -125,7 +162,7 @@ public class PlayerGunFire : MonoBehaviour
         _reloadingTimeSlider.value = 0f;
         _reloadingMsg.text = "Reloading...";
         _isReloading = true;
-        yield return new WaitForSeconds(_reloadingTime);
+        yield return new WaitForSeconds(CurrentGun.ReloadingTime);
         FillMagazine();
         _isReloading = false;
         _reloadingMsg.text = string.Empty;
@@ -134,14 +171,14 @@ public class PlayerGunFire : MonoBehaviour
     }
     private void FillMagazine()
     {
-        TotalBulletLeft -= MagazineCapacity - _bulletLeft;
-        _bulletLeft = MagazineCapacity;
+        CurrentGun.TotalBulletLeft -= CurrentGun.MagazineCapacity - CurrentGun.BulletLeft;
+        CurrentGun.BulletLeft = CurrentGun.MagazineCapacity;
         RefreshTextUI();
     }
 
     private void RefreshTextUI()
     {
-        _magazineUI.text = $"Bullet {_bulletLeft:D2} / {TotalBulletLeft}";
+        _magazineUI.text = $"Bullet {CurrentGun.BulletLeft:D2} / {CurrentGun.TotalBulletLeft}";
     }
    
 }
