@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,12 +21,30 @@ public class Monster : MonoBehaviour, IHitable
         Health -= damage;
         if (Health <= 0)
         {
-            Destroy(gameObject);
+            DieMonster();
         }
     }
     public void Init()
     {
         Health = MaxHealth;
+    }
+    public void DieMonster()
+    {
+        int spawnItemRandomFactor = Random.Range(0, 10);
+        if (spawnItemRandomFactor >= 8)
+        {
+            ItemManager.Instance.SpawnItem(ItemType.Health, transform);
+;       }
+        else if (spawnItemRandomFactor >= 6)
+        {
+            ItemManager.Instance.SpawnItem(ItemType.Stamina, transform);
+        }
+        else if (spawnItemRandomFactor >= 5)
+        {
+            ItemManager.Instance.SpawnItem(ItemType.Bullet, transform);
+        }
+
+        Destroy(gameObject);
     }
     void Start()
     {

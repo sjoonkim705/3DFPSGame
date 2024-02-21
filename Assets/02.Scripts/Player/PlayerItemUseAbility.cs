@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class PlayerItemUseAbility : MonoBehaviour
 {
+    private CharacterController _playerController;
     void Start()
     {
-        
+        _playerController = GetComponent<CharacterController>();
     }
 
     void Update()

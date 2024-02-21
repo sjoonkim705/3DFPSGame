@@ -69,6 +69,15 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
  
     }
 
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.collider.CompareTag("Item"))
+        {
+            ItemManager.Instance.AddItem(hit.gameObject.GetComponent<ItemObject>().ItemType);
+            Debug.Log("ItemGet");
+            Destroy(hit.gameObject);
+        }
+    }
 
     private void Awake()
     {
