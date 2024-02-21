@@ -5,7 +5,7 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerGunFire : MonoBehaviour
+public class PlayerGunFireAbility : MonoBehaviour
 {
 
     // 목표 : 마우스 왼쪽 버튼을 누르면 시선이 바라보는 방향으로 총을 발사하고 싶다.
@@ -14,11 +14,14 @@ public class PlayerGunFire : MonoBehaviour
     public Gun CurrentGun;
     private int _currentGunIndex;
 
+    [Header("Zoom Factors")]
     private bool _isZoomMode = false;
     private const int DEFAULT_FOV = 60;
     private const int ZOOM_FOV = 20;
     private float _zoomTransition = 0;
-    private float duration = 0.3f;
+    private float _zoomInDuration = 0.3f;
+    private float _zoomOutDuration = 0.2f;
+
     // - 총알 튀는 이펙트 프리팹
     public ParticleSystem HitEffect;
 
@@ -46,12 +49,15 @@ public class PlayerGunFire : MonoBehaviour
     private Text _reloadingMsg;
     [SerializeField]
     private Slider _reloadingTimeSlider;
+    [SerializeField]
+    private Image _zoomModeCrossHair;
+    private Vector3 _crossHairPosition;
 
     public bool GetZoomMode()
     {
-        bool returnValue;
-        returnValue = _isZoomMode ? true : false;
-        return returnValue;
+        bool boolReturn;
+        boolReturn = _isZoomMode ? true : false;
+        return boolReturn;
     }
     void SetGunActive(GunType gunType)
     {
@@ -70,16 +76,11 @@ public class PlayerGunFire : MonoBehaviour
             }
         }
     }
-    void SetZoomModeUI(bool isZoomMode)
-    { 
-        CrossHairZoomMode.SetActive(isZoomMode);
-        CrossHairUI.SetActive(!isZoomMode);
-
-    }
 
 
     private void Start()
     {
+        _crossHairPosition = Vector3.zero;
         _reloadingTimeSlider.gameObject.SetActive(false);
         _reloadingCoroutine = null;
         _reloadingMsg.text = string.Empty;
@@ -94,28 +95,33 @@ public class PlayerGunFire : MonoBehaviour
         if (Input.GetMouseButtonDown(2) && CurrentGun.Gtype == GunType.Sniper)
         {
             _isZoomMode = !_isZoomMode;
+            _zoomTransition = 0;
         }
         else if (CurrentGun.Gtype != GunType.Sniper)
         { 
             _isZoomMode = false;
+            _zoomTransition = 1;
+ 
         }
-
-        if (_isZoomMode)
+   
+        if (_isZoomMode && _zoomTransition <= 1)
         {
-            SetZoomModeUI(true);
-            _zoomTransition -= Time.deltaTime/duration;
-            _zoomTransition = Mathf.Clamp(_zoomTransition, 0, 1);
-            Camera.main.fieldOfView = Mathf.Lerp(ZOOM_FOV,DEFAULT_FOV, _zoomTransition);
+            CrossHairZoomMode.SetActive(true);
+            CrossHairUI.SetActive(false);
+            _zoomTransition += Time.deltaTime / _zoomInDuration;
+            Camera.main.fieldOfView = Mathf.Lerp(DEFAULT_FOV, ZOOM_FOV, _zoomTransition);
+ 
+
         }
-        else
+        else if (!_isZoomMode && _zoomTransition <= 1) 
         {
-            SetZoomModeUI(false);
-            _zoomTransition += Time.deltaTime;
-            _zoomTransition = Mathf.Clamp(_zoomTransition, 0, 1);
-            Camera.main.fieldOfView = Mathf.Lerp(ZOOM_FOV, DEFAULT_FOV, _zoomTransition);
+            CrossHairZoomMode.SetActive(false);
+            CrossHairUI.SetActive(true);
+            _zoomTransition += Time.deltaTime / _zoomOutDuration;
+            // _zoomTransition = Mathf.Clamp(_zoomTransition, 0, 1);
+            Camera.main.fieldOfView = Mathf.Lerp(ZOOM_FOV, DEFAULT_FOV,_zoomTransition);
         }
-
-
+  
         if (Input.GetKeyDown(KeyCode.LeftBracket))
         {
             _currentGunIndex--;
@@ -237,7 +243,7 @@ public class PlayerGunFire : MonoBehaviour
         RefreshUI();
     }
 
-    private void RefreshUI()
+    public void RefreshUI()
     {
         GunUIImage.sprite = CurrentGun.ProfileImage;
         _magazineUI.text = $"{CurrentGun.BulletLeft:D2} / {CurrentGun.TotalBulletLeft}";

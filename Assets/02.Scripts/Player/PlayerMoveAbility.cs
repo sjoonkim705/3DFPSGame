@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerMove : MonoBehaviour , IHitable
+public class PlayerMoveAbility : MonoBehaviour , IHitable
 {
     // 목표: 키보드 방향키(wasd)를 누르면 캐릭터를 바라보는 방향 기준으로 이동시키고 싶다. 
     // 속성:
@@ -114,20 +114,16 @@ public class PlayerMove : MonoBehaviour , IHitable
         }
 
 
-        // 1. 만약 벽에 닿아 있는데
-/*        if(_characterController.collisionFlags == CollisionFlags.Sides)
-        {*/
-            // 2. [SpaceBar]를 버튼을 누르고 있으면
-            if (Input.GetKey(KeyCode.Space) && (Stamina > 0) && (_characterController.collisionFlags == CollisionFlags.Sides) && !_isFalling)
-            {
-                _isClimbing = true;
-            }
-            else
-            {
-                _isClimbing = false;
-            }
- /*       }
-*/
+
+        if (Input.GetKey(KeyCode.Space) && (Stamina > 0) && (_characterController.collisionFlags == CollisionFlags.Sides) && !_isFalling)
+        {
+            _isClimbing = true;
+        }
+        else
+        {
+            _isClimbing = false;
+        }
+
         if (_isClimbing)
         {
             ClimbWall();

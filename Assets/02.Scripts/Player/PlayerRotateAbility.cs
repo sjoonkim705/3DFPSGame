@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerRotate : MonoBehaviour
+public class PlayerRotateAbility : MonoBehaviour
 {
     // 목표: 마우스를 조작하면 플레이어를 좌우방향으로 회전 시키고 싶다.
     // 필요 속성:
