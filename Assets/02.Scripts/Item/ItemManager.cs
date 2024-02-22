@@ -14,9 +14,7 @@ public class ItemManager : MonoBehaviour
     public Text StaminaCountTextUI;
     public Text BulletCountTextUI;
 
-    public GameObject HealthItemPrefab;
-    public GameObject StaminaItemPrefab;
-    public GameObject BulletItemPrefab;
+
 
     private void Awake()
     {
@@ -54,23 +52,7 @@ public class ItemManager : MonoBehaviour
         RefreshUI();
     }
 
-    public void SpawnItem(ItemType itemType, Transform spawnPosition)
-    {
-        GameObject newItem = null;
-        switch (itemType)
-        {
-            case ItemType.Health:
-                newItem = Instantiate(HealthItemPrefab);
-                break;
-            case ItemType.Stamina:
-                newItem = Instantiate(StaminaItemPrefab);
-                break;
-            case ItemType.Bullet:
-                newItem = Instantiate(BulletItemPrefab);
-                break;
-        }
-        newItem.transform.position = spawnPosition.position;
-    }
+
     public void AddItem(ItemType itemType)
     {
         for (int i = 0; i < ItemList.Count; i++)
