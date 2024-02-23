@@ -98,30 +98,30 @@ public class PlayerGunFireAbility : MonoBehaviour
             _zoomTransition = 0;
         }
         else if (CurrentGun.Gtype != GunType.Sniper)
-        { 
+        {
             _isZoomMode = false;
             _zoomTransition = 1;
- 
+
         }
-   
+
         if (_isZoomMode && _zoomTransition <= 1)
         {
             CrossHairZoomMode.SetActive(true);
             CrossHairUI.SetActive(false);
             _zoomTransition += Time.deltaTime / _zoomInDuration;
             Camera.main.fieldOfView = Mathf.Lerp(DEFAULT_FOV, ZOOM_FOV, _zoomTransition);
- 
+
 
         }
-        else if (!_isZoomMode && _zoomTransition <= 1) 
+        else if (!_isZoomMode && _zoomTransition <= 1)
         {
             CrossHairZoomMode.SetActive(false);
             CrossHairUI.SetActive(true);
             _zoomTransition += Time.deltaTime / _zoomOutDuration;
             // _zoomTransition = Mathf.Clamp(_zoomTransition, 0, 1);
-            Camera.main.fieldOfView = Mathf.Lerp(ZOOM_FOV, DEFAULT_FOV,_zoomTransition);
+            Camera.main.fieldOfView = Mathf.Lerp(ZOOM_FOV, DEFAULT_FOV, _zoomTransition);
         }
-  
+
         if (Input.GetKeyDown(KeyCode.LeftBracket))
         {
             _currentGunIndex--;
@@ -150,10 +150,10 @@ public class PlayerGunFireAbility : MonoBehaviour
             RefreshUI();
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
-        { 
+        {
             SetGunActive(GunType.Sniper);
             RefreshUI();
-        }        
+        }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             SetGunActive(GunType.Pistol);
@@ -174,7 +174,7 @@ public class PlayerGunFireAbility : MonoBehaviour
             }
             Fire();
         }
-        if(_isReloading)
+        if (_isReloading)
         {
             _reloadingTimeSlider.value += Time.deltaTime;
         }
@@ -194,7 +194,7 @@ public class PlayerGunFireAbility : MonoBehaviour
     }
     private void Fire()
     {
-        FpsCamera.Shake();
+        CameraManager.Instance.CameraShake.Shake(0.1f, 0.01f);
 
         // 2. Ray를 생성하고, 위치와 방향을 설정한다.
         Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
@@ -207,7 +207,17 @@ public class PlayerGunFireAbility : MonoBehaviour
             IHitable hitObject = hitInfo.collider.GetComponent<IHitable>();
             if (hitObject != null)
             {
-                hitObject.Hit(CurrentGun.Damage);
+                int damageFactor = 1;
+                if (hitInfo.collider.gameObject.CompareTag("Weakpoint"))
+                {
+                    damageFactor = 5;
+                    Debug.Log("Weakpoint");
+                }
+                else
+                {
+                    damageFactor = 1;
+                }
+                hitObject.Hit(CurrentGun.Damage * damageFactor);
             }
 
             HitEffect.gameObject.transform.position = hitInfo.point;
@@ -224,6 +234,7 @@ public class PlayerGunFireAbility : MonoBehaviour
         RefreshUI();
 
     }
+  
 
     private IEnumerator Reload_Coroutine()
     {

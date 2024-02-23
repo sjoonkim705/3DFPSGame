@@ -8,6 +8,7 @@ TagManager:
   - Ground
   - Barrel
   - Item
+  - Weakpoint
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - Monster
   - Bomb
   - Environment
-  - 
+  - Item
   - 
   - 
   - 

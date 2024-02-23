@@ -5,18 +5,22 @@ using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 public enum ItemState
 {
-    Stand,
-    Draw,
-    Taken
+    Idle,
+    Trace,
+    Take
 }
 public class ItemObject : MonoBehaviour
 {
-    private ItemState _currentstate = ItemState.Stand;
+    private ItemState _currentstate = ItemState.Idle;
     public ItemType ItemType;
+
+    private Rigidbody itemRigid;
+
+    private float _pickupDistance = 3f;
 
     public float _drawSpeed = 5.0f;
     private float _drawProgress = 0;
-    private const float DRAW_DURATION = 0.5f;
+    private const float DRAW_DURATION = 0.3f;
 
     private Vector3 _drawStartPosition;
     private Vector3 _drawEndPosition;
@@ -26,71 +30,67 @@ public class ItemObject : MonoBehaviour
     // 실습 과제31. 몬스터가 죽으면 아이템이 드랍 (Health:20%, Stamina: 20, bullet 10%)
     // 실습 과제32. 일정 거리가 되면 아이템이 베지어 곡선으로 날아온다.
 
-    public float pickupDistance = 10f;
-
-
-    private void Stand()
+    private void Start()
+    {
+        itemRigid = GetComponent<Rigidbody>();
+    }
+    public void Init()
+    {
+        _traceCoroutine = null;
+        _drawProgress = 0;
+    }
+    private void Idle()
     {
         Vector3 playerPosition = ItemManager.Instance.Player.transform.position;
         float distanceToPlayer = Vector3.Distance(transform.position, playerPosition);
-        if (distanceToPlayer <= pickupDistance)
+        itemRigid.AddTorque(Vector3.up);
+        if (distanceToPlayer <= _pickupDistance)
         {
-            Debug.Log(distanceToPlayer);
-            Debug.Log("Stand -> Draw");
-            _currentstate = ItemState.Draw;
+            //Debug.Log(distanceToPlayer);
+            Debug.Log("Idle -> Trace");
+            _currentstate = ItemState.Trace;
         }
     }
-    private void Draw()
+
+
+    private Coroutine _traceCoroutine;
+    private void Trace()
     {
-        // Vector3 dir = ItemManager.Instance.Player.transform.position - transform.position;
-        if (_drawProgress == 0)
+        if(_traceCoroutine == null)
         {
-            _drawStartPosition = transform.position;
+            _traceCoroutine = StartCoroutine(Trace_Coroutine());
         }
-            _drawEndPosition = ItemManager.Instance.Player.transform.position;
+    }
+    private IEnumerator Trace_Coroutine()
+    {
+       
+        _drawStartPosition = transform.position;
+        _drawEndPosition = ItemManager.Instance.Player.transform.position;
 
-        _drawProgress += Time.deltaTime / DRAW_DURATION;
-        transform.position = Vector3.Slerp(_drawStartPosition, _drawEndPosition, _drawProgress);
-        if (_drawProgress > 1)
+        while (_drawProgress <= 0.6)
         {
-            _drawProgress = 0;
+            _drawProgress += Time.deltaTime / DRAW_DURATION;
+            transform.position = Vector3.Slerp(_drawStartPosition, _drawEndPosition, _drawProgress);
+            yield return null;
         }
-
-
-        // transform.position += dir * drawSpeed * Time.deltaTime;
-
-
+        ItemManager.Instance.AddItem(ItemType);
+        gameObject.SetActive(false);
     }
 
     void Update()
     {
         switch (_currentstate)
         {
-            case ItemState.Stand:
-                Stand();
+            case ItemState.Idle:
+                Idle();
                 break;
-            case ItemState.Draw:
-                Draw();
+            case ItemState.Trace:
+                Trace();
                 break;
-            case ItemState.Taken:
-                //Take();
+            case ItemState.Take:
                 break;
 
         }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            ItemManager.Instance.AddItem(ItemType);
-            gameObject.SetActive(false);
-        }
-    }
-
-    private void DrawItem()
-    {
-     //   Debug.Log("EatItem");
     }
 
 }

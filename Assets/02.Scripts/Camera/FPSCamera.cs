@@ -9,7 +9,7 @@ public class FPSCamera : MonoBehaviour
 {
 
     public static FPSCamera Instance;
-
+    public GameObject GameCamera;
     private void Awake()
     {
         Instance = this; 
@@ -52,7 +52,7 @@ public class FPSCamera : MonoBehaviour
         if (CameraManager.Instance.Mode == CameraMode.FPS)
         {
             // 1. 캐릭터의 눈 위치로 카메라를 이동시킨다.
-            transform.position = Target.position;
+            transform.localPosition = Target.position;
         }
         // 1. 마우스 입력(drag) 받는다.
         float mouseX = Input.GetAxis("Mouse X"); // 방향에 따라 -1 ~ 1 사이의 값 반환 
@@ -87,9 +87,4 @@ public class FPSCamera : MonoBehaviour
         // 위 2번 문제 해결을 위해서 우리가 미리 연산을 해줘야 한다.
     }
 
-    public void Shake()
-    {
-        _mx += Random.Range(-0.6f, 0.6f);
-        _my += Random.Range(-0.6f, 0.6f);
-    }
 }

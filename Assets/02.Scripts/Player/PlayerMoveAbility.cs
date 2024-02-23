@@ -25,6 +25,7 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
     private int JumpRemainCount;
     private bool _isFalling = false;
     private bool _isRunning = false;
+    public Image HitEffectImageUI;
     
     [Header("스태미나 슬라이더 UI")]
     public Slider StaminaSliderUI;
@@ -66,6 +67,9 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
     public void Hit(int damage)
     {
         Health -= damage;
+        StartCoroutine(HitEffect_Coroutine(0.2f));
+        CameraManager.Instance.CameraShake.Shake(0.025f, 0.2f);
+
  
     }
 
@@ -99,7 +103,6 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
     {
         _healthSlider.value = (float)Health / MaxHealth;
         float sliderValue = _healthSlider.value;
-        //Image fillAreaColor = _healthSliderFillArea.GetComponent<Image>();
         if (sliderValue > 0.7)
         {
             _healthSliderFillArea.color = Color.green;
@@ -113,7 +116,7 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
             _healthSliderFillArea.color = Color.red;
         }
 
-
+   
 
         if (Input.GetKey(KeyCode.Space) && (Stamina > 0) && (_characterController.collisionFlags == CollisionFlags.Sides) && !_isFalling)
         {
@@ -150,7 +153,6 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
         // 2. '캐릭터가 바라보는 방향'을 기준으로 방향구하기
         Vector3 dir = new Vector3(h, 0, v);             // 로컬 좌표꼐 (나만의 동서남북) 
         dir.Normalize();
-        // Transforms direction from local space to world space.
         dir = Camera.main.transform.TransformDirection(dir); // 글로벌 좌표계 (세상의 동서남북)
 
         // 실습 과제 1. Shift 누르고 있으면 빨리 뛰기
@@ -182,6 +184,10 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
 
         if (_characterController.isGrounded)
         {
+            if (_yVelocity < -30)
+            {
+                Hit(10 * (int)(_yVelocity / -10f));
+            }
             JumpRemainCount = JumpMaxCount;
             _isJumping = false;
             _isFalling = false;
@@ -215,6 +221,12 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
         // 3. 이동하기
         // transform.position += speed * dir * Time.deltaTime;
         _characterController.Move(dir * speed * Time.deltaTime);
-
     }
+    private IEnumerator HitEffect_Coroutine(float delay)
+    {
+        HitEffectImageUI.gameObject.SetActive(true);
+        yield return new WaitForSeconds(delay);
+        HitEffectImageUI.gameObject.SetActive(false);
+    }
+
 }

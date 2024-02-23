@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 // 아이템 공장의 역할: 아이템 오브젝트의 생성을 책임진다.
@@ -60,7 +61,7 @@ public class ItemObjectFactory : MonoBehaviour
         }
         return null;
     }
-    public void MakebyProbability(Vector3 position)
+    public void MakePercent(Vector3 position)
     {
         int itemRandomFactor = Random.Range(0, 100);
         Debug.Log(itemRandomFactor);
@@ -80,9 +81,13 @@ public class ItemObjectFactory : MonoBehaviour
     public void Make(ItemType itemType, Vector3 position)
     {
        // GameObject newItem = null;
-        ItemObject itemObject = Get(itemType);      
-        itemObject.gameObject.SetActive(true);
-        itemObject.transform.position = position;
+        ItemObject itemObject = Get(itemType);   
+        if (itemObject != null)
+        {
+            itemObject.gameObject.SetActive(true);
+            itemObject.Init();
+            itemObject.transform.position = position;
+        }
         
     }
 }

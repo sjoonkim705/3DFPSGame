@@ -15,8 +15,10 @@ public class CameraManager : MonoBehaviour
 {
     public static CameraManager Instance { get; private set; }
 
-    private FPSCamera _FPSCamera;
-    private TPSCamera _TPSCamera;
+    public FPSCamera FPSCamera;
+    public TPSCamera TPSCamera;
+    public CameraShake CameraShake;
+
 
     public CameraMode Mode = CameraMode.FPS;
 
@@ -31,8 +33,9 @@ public class CameraManager : MonoBehaviour
             Destroy(this);
         }
 
-        _FPSCamera = GetComponent<FPSCamera>();
-        _TPSCamera = GetComponent<TPSCamera>();
+        FPSCamera = GetComponent<FPSCamera>();
+        TPSCamera = GetComponent<TPSCamera>();
+
 
         SetCameraMode(CameraMode.FPS);
     }
@@ -41,8 +44,8 @@ public class CameraManager : MonoBehaviour
     {
         Mode = mode;
 
-        _FPSCamera.enabled = (mode == CameraMode.FPS);
-        _TPSCamera.enabled = (mode == CameraMode.TPS);
+        FPSCamera.enabled = (mode == CameraMode.FPS);
+        TPSCamera.enabled = (mode == CameraMode.TPS);
     }
 
 
