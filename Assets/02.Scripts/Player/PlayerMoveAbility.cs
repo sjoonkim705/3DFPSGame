@@ -26,7 +26,8 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
     private bool _isFalling = false;
     private bool _isRunning = false;
     public Image HitEffectImageUI;
-    
+    private Vector3 _dir;
+
     [Header("스태미나 슬라이더 UI")]
     public Slider StaminaSliderUI;
     private CharacterController _characterController;
@@ -34,7 +35,7 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
     // 목표 : 스페이스바를 누르면 캐릭터르 점프하고 싶다.
     // 필요 속성:
     // - 점프 파워 값
-    public float JumpPower = 10f;
+    public float JumpPower = 3f;
 
     // 점프 구현
     // 1. 만약에 [SpaceBar]를 누르면..
@@ -69,6 +70,7 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
         Health -= damage;
         StartCoroutine(HitEffect_Coroutine(0.2f));
         CameraManager.Instance.CameraShake.Shake(0.025f, 0.2f);
+        Gamemanager.Instance.GameOver();
 
  
     }
@@ -101,6 +103,10 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
     }
     void Update()
     {
+        if (Gamemanager.Instance.State != GameState.Go)
+        {
+            return;
+        }
         _healthSlider.value = (float)Health / MaxHealth;
         float sliderValue = _healthSlider.value;
         if (sliderValue > 0.7)
@@ -145,15 +151,15 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
             CameraManager.Instance.SetCameraMode(CameraMode.TPS);
         }
 
-
+            float h = Input.GetAxis("Horizontal");
+            float v = Input.GetAxis("Vertical");
+            _dir = new Vector3(h, 0, v);             // 로컬 좌표꼐 (나만의 동서남북) 
+            _dir.Normalize();
+            _dir = Camera.main.transform.TransformDirection(_dir); // 글로벌 좌표계 (세상의 동서남북)
+        
         // 1. 키 입력 받기
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
 
         // 2. '캐릭터가 바라보는 방향'을 기준으로 방향구하기
-        Vector3 dir = new Vector3(h, 0, v);             // 로컬 좌표꼐 (나만의 동서남북) 
-        dir.Normalize();
-        dir = Camera.main.transform.TransformDirection(dir); // 글로벌 좌표계 (세상의 동서남북)
 
         // 실습 과제 1. Shift 누르고 있으면 빨리 뛰기
         float speed = MoveSpeed; // 5
@@ -216,11 +222,11 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
         _yVelocity += _gravity * Time.deltaTime;
 
         // 2. 플레이어에게 y축에 있어 중력을 적용한다.
-        dir.y = _yVelocity;
+        _dir.y = _yVelocity;
 
         // 3. 이동하기
         // transform.position += speed * dir * Time.deltaTime;
-        _characterController.Move(dir * speed * Time.deltaTime);
+        _characterController.Move(_dir * speed * Time.deltaTime);
     }
     private IEnumerator HitEffect_Coroutine(float delay)
     {

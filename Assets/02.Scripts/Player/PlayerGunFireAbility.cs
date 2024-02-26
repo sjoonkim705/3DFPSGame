@@ -92,6 +92,10 @@ public class PlayerGunFireAbility : MonoBehaviour
 
     void Update()
     {
+        if (Gamemanager.Instance.State != GameState.Go)
+        {
+            return;
+        }
         if (Input.GetMouseButtonDown(2) && CurrentGun.Gtype == GunType.Sniper)
         {
             _isZoomMode = !_isZoomMode;

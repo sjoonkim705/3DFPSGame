@@ -46,6 +46,10 @@ public class PlayerBombFireAbility : MonoBehaviour
 
     void Update()
     {
+        if (Gamemanager.Instance.State != GameState.Go)
+        {
+            return;
+        }
 
         if (Input.GetMouseButtonDown(1) && BombLeft > 0 && !PlayerGunInfo.GetZoomMode())
         {

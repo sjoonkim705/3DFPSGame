@@ -49,12 +49,18 @@ public class FPSCamera : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (Gamemanager.Instance.State != GameState.Go)
+        {
+            return;
+        }
+
         if (CameraManager.Instance.Mode == CameraMode.FPS)
         {
             // 1. 캐릭터의 눈 위치로 카메라를 이동시킨다.
             transform.localPosition = Target.position;
         }
         // 1. 마우스 입력(drag) 받는다.
+        
         float mouseX = Input.GetAxis("Mouse X"); // 방향에 따라 -1 ~ 1 사이의 값 반환 
         float mouseY = Input.GetAxis("Mouse Y");
         //Debug.Log($"GetAxis: {mouseX},{mouseY}");
@@ -69,8 +75,10 @@ public class FPSCamera : MonoBehaviour
         // 새로운 위치 = 이전 위치 + 방향 * 속도 * 시간
         // 새로운 회전 = 이전 회전 + 방향 * 속도 * 시간
         // 3-1 회전 방향에 따라 마우스 입력 값 만큼 미리 누적시킨다.
-        _mx += rotationDir.x * RotationSpeed * Time.deltaTime;
-        _my += rotationDir.y * RotationSpeed * Time.deltaTime;
+
+            _mx += rotationDir.x * RotationSpeed * Time.deltaTime;
+            _my += rotationDir.y * RotationSpeed * Time.deltaTime;
+        
 
         // 4. 시선의 상하 제한을 -90 ~ 90로 사이로 제한하고 싶다.
         _my = Mathf.Clamp(_my, -90f, 90f);

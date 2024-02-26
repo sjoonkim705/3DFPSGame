@@ -64,7 +64,7 @@ public class ItemObjectFactory : MonoBehaviour
     public void MakePercent(Vector3 position)
     {
         int itemRandomFactor = Random.Range(0, 100);
-        Debug.Log(itemRandomFactor);
+       // Debug.Log(itemRandomFactor);
         if (itemRandomFactor <= 20)
         {
             Make(ItemType.Health, position);
