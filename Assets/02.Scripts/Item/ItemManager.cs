@@ -1,7 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using System;
+using UnityEngine.Events;
 using UnityEngine.UI;
+using System.Linq;
 
 // 역할 : 아이템들을 관리해주는 관리자
 // 데이터 관리 - > 데이터를 생성, 수정, 삭제, 조회(검색), 정렬
@@ -10,10 +14,18 @@ public class ItemManager : MonoBehaviour
 {
     public static ItemManager Instance { get; private set; }
     public GameObject Player;
-    public Text HealthItemCountTextUI;
-    public Text StaminaCountTextUI;
-    public Text BulletCountTextUI;
-
+    private Action OnDataChanged;
+    public void Subscribe(Action action)
+    {
+      if(!OnDataChanged.GetInvocationList().Contains(action))
+        {
+            OnDataChanged += action;
+        }
+    }
+    // 관찰자 패턴
+    // 구독자가 구독하고 있는 유튜버의 상태가 변화할 때마다
+    // 유튜버는 구독자에게 통지하고 이벤트를 통지하고, 구독자들은 이벤트 알림을 받아 적절하게
+    // 행동하는 패턴
 
 
     private void Awake()
@@ -44,12 +56,12 @@ public class ItemManager : MonoBehaviour
 
         ItemList[2].ItemType = ItemType.Bullet;
         ItemList[2].Count = GetItemCount(ItemType.Bullet);
-        RefreshUI();
+        if (OnDataChanged != null)
+        {
+            OnDataChanged.Invoke();
 
-    }
-    private void Update()
-    {
-        RefreshUI();
+        }
+
     }
 
 
@@ -60,6 +72,11 @@ public class ItemManager : MonoBehaviour
             if (ItemList[i].ItemType == itemType)
             {
                 ItemList[i].Count++;
+                if (OnDataChanged != null)
+                {
+                    OnDataChanged.Invoke();
+
+                }
                 break;
             }
         }
@@ -72,6 +89,7 @@ public class ItemManager : MonoBehaviour
             if (ItemList[i].ItemType == itemType)
             {
                 return ItemList[i].Count;
+
             }
         }
         return 0;
@@ -84,17 +102,16 @@ public class ItemManager : MonoBehaviour
         {
             if (ItemList[i].ItemType == itemType)
             {
+                if (OnDataChanged != null)
+                {
+                    OnDataChanged.Invoke();
+
+                }
                 return ItemList[i].TryUse();
             }
         }
         return false;
     }
 
-    public void RefreshUI()
-    {
-        HealthItemCountTextUI.text = $"x{GetItemCount(ItemType.Health)}";
-        StaminaCountTextUI.text = $"x{GetItemCount(ItemType.Stamina)}";
-        BulletCountTextUI.text = $"x{GetItemCount(ItemType.Bullet)}";
-    }
 
 }

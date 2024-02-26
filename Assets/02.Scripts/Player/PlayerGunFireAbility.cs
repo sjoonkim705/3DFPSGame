@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -44,9 +45,9 @@ public class PlayerGunFireAbility : MonoBehaviour
 
     public FPSCamera FpsCamera;
     [SerializeField]
-    private Text _magazineUI;
+    private TextMeshProUGUI _magazineUI;
     [SerializeField]
-    private Text _reloadingMsg;
+    private TextMeshProUGUI _reloadingMsg;
     [SerializeField]
     private Slider _reloadingTimeSlider;
     [SerializeField]
@@ -191,7 +192,7 @@ public class PlayerGunFireAbility : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R) && !_isReloading)
         {
             _reloadingTimeSlider.value = 0f;
-            _reloadingMsg.text = "Reloading..";
+            _reloadingMsg.text = "재장전중..";
             _reloadingTimeSlider.gameObject.SetActive(true);
             _reloadingCoroutine = StartCoroutine(Reload_Coroutine());
         }

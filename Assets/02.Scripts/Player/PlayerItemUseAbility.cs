@@ -17,7 +17,7 @@ public class PlayerItemUseAbility : MonoBehaviour
             if(ItemManager.Instance.TryUseItem(ItemType.Health))
             {
                 Debug.Log(ItemManager.Instance.GetItemCount(ItemType.Health));
-                ItemManager.Instance.RefreshUI();
+                // ItemManager.Instance.OnDataChanged();
             }
 
         }
@@ -25,14 +25,14 @@ public class PlayerItemUseAbility : MonoBehaviour
         {
             if(ItemManager.Instance.TryUseItem(ItemType.Stamina))
             {
-                ItemManager.Instance.RefreshUI();
+                //ItemManager.Instance.RefreshUI();
             }
         }
         if (Input.GetKeyDown(KeyCode.U))
         {
             if (ItemManager.Instance.TryUseItem(ItemType.Bullet))
             {
-                ItemManager.Instance.RefreshUI();
+               // ItemManager.Instance.RefreshUI();
                
             }
         }

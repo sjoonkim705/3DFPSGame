@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,8 +19,7 @@ public class Gamemanager : MonoBehaviour
     // 게임의 상태는 처음에 "준비"상태
     public static Gamemanager Instance { get; private set; }
     public GameState State { get; private set; } = GameState.Ready;
-    public InputField InputField;
-    public Text StateTextUI;
+    public TextMeshProUGUI StateTextUI;
 
     // 게임 상태
     // 1. 게임 준비 상태
