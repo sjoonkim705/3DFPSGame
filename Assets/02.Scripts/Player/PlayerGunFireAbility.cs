@@ -245,7 +245,7 @@ public class PlayerGunFireAbility : MonoBehaviour
     {
         _reloadingTimeSlider.value = 0f;
         _reloadingTimeSlider.maxValue = CurrentGun.ReloadingTime;
-        _reloadingMsg.text = "Reloading...";
+        _reloadingMsg.text = "재장전중...";
         _isReloading = true;
         yield return new WaitForSeconds(CurrentGun.ReloadingTime);
         FillMagazine();

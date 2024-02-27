@@ -15,13 +15,13 @@ public class ItemManager : MonoBehaviour
     public static ItemManager Instance { get; private set; }
     public GameObject Player;
     private Action OnDataChanged;
-    public void Subscribe(Action action)
+/*    public void Subscribe(Action action)
     {
       if(!OnDataChanged.GetInvocationList().Contains(action))
         {
             OnDataChanged += action;
         }
-    }
+    }*/
     // 관찰자 패턴
     // 구독자가 구독하고 있는 유튜버의 상태가 변화할 때마다
     // 유튜버는 구독자에게 통지하고 이벤트를 통지하고, 구독자들은 이벤트 알림을 받아 적절하게

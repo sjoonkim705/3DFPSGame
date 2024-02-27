@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,6 +32,10 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
     [Header("스태미나 슬라이더 UI")]
     public Slider StaminaSliderUI;
     private CharacterController _characterController;
+
+    private Animator _animator;
+
+
 
     // 목표 : 스페이스바를 누르면 캐릭터르 점프하고 싶다.
     // 필요 속성:
@@ -70,7 +75,10 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
         Health -= damage;
         StartCoroutine(HitEffect_Coroutine(0.2f));
         CameraManager.Instance.CameraShake.Shake(0.025f, 0.2f);
-        Gamemanager.Instance.GameOver();
+        if(Health <0)
+        {
+            Gamemanager.Instance.GameOver();
+        }
 
  
     }
@@ -79,6 +87,7 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
+        _animator = GetComponentInChildren<Animator>();
 
     }
     private void Start()
@@ -154,6 +163,7 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
             float h = Input.GetAxis("Horizontal");
             float v = Input.GetAxis("Vertical");
             _dir = new Vector3(h, 0, v);             // 로컬 좌표꼐 (나만의 동서남북) 
+            float unNormalizedDir = _dir.magnitude;
             _dir.Normalize();
             _dir = Camera.main.transform.TransformDirection(_dir); // 글로벌 좌표계 (세상의 동서남북)
         
@@ -227,6 +237,7 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
         // 3. 이동하기
         // transform.position += speed * dir * Time.deltaTime;
         _characterController.Move(_dir * speed * Time.deltaTime);
+        _animator.SetFloat("Move", unNormalizedDir);
     }
     private IEnumerator HitEffect_Coroutine(float delay)
     {

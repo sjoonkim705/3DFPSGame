@@ -12,8 +12,7 @@ public class UI_ItemInventory : MonoBehaviour
     public void Start()
     {
         Refresh();
-
-        ItemManager.Instance.Subscribe(Refresh);
+       // ItemManager.Instance.Subscribe(Refresh);
 
     }
 
