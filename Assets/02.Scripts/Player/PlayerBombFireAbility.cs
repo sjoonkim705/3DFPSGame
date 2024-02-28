@@ -19,6 +19,7 @@ public class PlayerBombFireAbility : MonoBehaviour
     public int BombLeft;
     public int MaxBombNumber = 3;
     public PlayerGunFireAbility PlayerGunInfo;
+    private Animator _animator;
 
     public List<GameObject> BombPool;
 
@@ -27,6 +28,7 @@ public class PlayerBombFireAbility : MonoBehaviour
 
     void Start()
     {
+        _animator = GetComponentInChildren<Animator>();
 
         BombLeft = MaxBombNumber;
         BombPool = new List<GameObject>();
@@ -39,7 +41,7 @@ public class PlayerBombFireAbility : MonoBehaviour
         }
         RefreshUI();
     }
-    private void RefreshUI()
+    public void RefreshUI()
     {
         _bombLeftUI.text = $"{BombLeft} / {MaxBombNumber}";
     }
@@ -54,12 +56,13 @@ public class PlayerBombFireAbility : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1) && BombLeft > 0 && !PlayerGunInfo.GetZoomMode())
         {
-            BombFire();
+            //BombFire();
+            _animator.SetTrigger("Throw");
             BombLeft--;
             RefreshUI();
         }
     }
-    void BombFire()
+    public void BombFire()
     {
         // 2. 수류탄 던지는 위치에다가 수류탄 생성
 
@@ -74,6 +77,7 @@ public class PlayerBombFireAbility : MonoBehaviour
                 }
             }
         selectedBomb.SetActive(true);
+
         Rigidbody bombRigid = selectedBomb.GetComponent<Rigidbody>();
         bombRigid.velocity = Vector3.zero;
         bombRigid.AddForce(Camera.main.transform.forward * 30, ForceMode.Impulse);

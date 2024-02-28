@@ -11,6 +11,7 @@ public class PlayerGunFireAbility : MonoBehaviour
 
     // 목표 : 마우스 왼쪽 버튼을 누르면 시선이 바라보는 방향으로 총을 발사하고 싶다.
     // 필요 속성
+    private Animator _animator;
     private GunType _gtype;
     public Gun CurrentGun;
     private int _currentGunIndex;
@@ -81,6 +82,7 @@ public class PlayerGunFireAbility : MonoBehaviour
 
     private void Start()
     {
+        _animator = GetComponentInChildren<Animator>();
         _crossHairPosition = Vector3.zero;
         _reloadingTimeSlider.gameObject.SetActive(false);
         _reloadingCoroutine = null;
@@ -200,7 +202,7 @@ public class PlayerGunFireAbility : MonoBehaviour
     private void Fire()
     {
         CameraManager.Instance.CameraShake.Shake(0.1f, 0.01f);
-
+        _animator.SetTrigger("Shoot");
         // 2. Ray를 생성하고, 위치와 방향을 설정한다.
         Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
         // 3. Ray를 발사한다.
@@ -256,7 +258,11 @@ public class PlayerGunFireAbility : MonoBehaviour
     {
         CurrentGun.TotalBulletLeft -= CurrentGun.MagazineCapacity - CurrentGun.BulletLeft;
         CurrentGun.BulletLeft = CurrentGun.MagazineCapacity;
+        PlayerBombFireAbility playerBomb;
+        playerBomb = GetComponent<PlayerBombFireAbility>();
+        playerBomb.BombLeft = playerBomb.MaxBombNumber;
         RefreshUI();
+        playerBomb.RefreshUI();
     }
 
     public void RefreshUI()

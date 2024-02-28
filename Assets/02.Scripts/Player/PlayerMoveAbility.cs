@@ -75,6 +75,9 @@ public class PlayerMoveAbility : MonoBehaviour , IHitable
         Health -= damage;
         StartCoroutine(HitEffect_Coroutine(0.2f));
         CameraManager.Instance.CameraShake.Shake(0.025f, 0.2f);
+        _animator.SetLayerWeight(1, 1 - Health/(float)MaxHealth);
+
+
         if(Health <0)
         {
             Gamemanager.Instance.GameOver();
