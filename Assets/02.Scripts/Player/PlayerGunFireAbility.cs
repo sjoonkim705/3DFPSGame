@@ -35,6 +35,8 @@ public class PlayerGunFireAbility : MonoBehaviour
     public GameObject CrossHairZoomMode;
 
     public List<GameObject> SelectableGuns;
+    public List<GameObject> MuzzleEffects;
+
 
     // 구현 순서
     // 1. 만약에 마우스 왼쪽 버튼을 누르면
@@ -91,6 +93,10 @@ public class PlayerGunFireAbility : MonoBehaviour
         FpsCamera = CameraManager.Instance.GetComponent<FPSCamera>();
         SetGunActive(GunType.Rifle);
         RefreshUI();
+        foreach (GameObject muzzleEffect in MuzzleEffects)
+        {
+            muzzleEffect.SetActive(false);
+        }
     }
 
     void Update()
@@ -203,6 +209,7 @@ public class PlayerGunFireAbility : MonoBehaviour
     {
         CameraManager.Instance.CameraShake.Shake(0.1f, 0.01f);
         _animator.SetTrigger("Shoot");
+        StartCoroutine(FireEffect_Coroutine());
         // 2. Ray를 생성하고, 위치와 방향을 설정한다.
         Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
         // 3. Ray를 발사한다.
@@ -242,6 +249,13 @@ public class PlayerGunFireAbility : MonoBehaviour
 
     }
   
+    private IEnumerator FireEffect_Coroutine()
+    {
+        int muzzleRandomFactor = Random.Range(0, MuzzleEffects.Count);
+        MuzzleEffects[muzzleRandomFactor].SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        MuzzleEffects[muzzleRandomFactor].SetActive(false);
+    }
 
     private IEnumerator Reload_Coroutine()
     {

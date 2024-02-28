@@ -81,6 +81,8 @@ public class PlayerBombFireAbility : MonoBehaviour
         Rigidbody bombRigid = selectedBomb.GetComponent<Rigidbody>();
         bombRigid.velocity = Vector3.zero;
         bombRigid.AddForce(Camera.main.transform.forward * 30, ForceMode.Impulse);
+        bombRigid.AddTorque(Camera.main.transform.forward * 30, ForceMode.Impulse);
+
         selectedBomb.transform.position = FirePosition.position;
 
     }
