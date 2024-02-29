@@ -14,7 +14,7 @@ public class ItemManager : MonoBehaviour
 {
     public static ItemManager Instance { get; private set; }
     public GameObject Player;
-    private Action OnDataChanged;
+    public UnityEvent OnDataChanged;
 /*    public void Subscribe(Action action)
     {
       if(!OnDataChanged.GetInvocationList().Contains(action))

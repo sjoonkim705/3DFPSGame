@@ -14,11 +14,16 @@ public class Drum : MonoBehaviour, IHitable
     public float BurstingExplosionRadius = 3f;
     public int Damage = 70;
     public bool IsExploding = false;
-
+    public List<Material> BarrelMaterials;
+    private MeshRenderer _barrelMesh;
 
     public void Start()
     {
         BarrelRigid = GetComponent<Rigidbody>();
+        _barrelMesh = GetComponent<MeshRenderer>();
+        int materialRandIndex = Random.Range(0, BarrelMaterials.Count);
+        _barrelMesh.material = BarrelMaterials[materialRandIndex];
+
     }
 
     public void Hit(int damage)
