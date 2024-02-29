@@ -26,7 +26,7 @@ public class Drum : MonoBehaviour, IHitable
 
     }
 
-    public void Hit(int damage)
+    public void Hit(DamageInfo damage)
     {
         _hitCount++;
         if (_hitCount >= 3)
@@ -49,7 +49,8 @@ public class Drum : MonoBehaviour, IHitable
             {
                 if (collider.CompareTag("Player") || collider.CompareTag("Monster"))
                 {
-                    hitableObject.Hit(Damage);
+                    DamageInfo damageInfo = new DamageInfo();
+                    hitableObject.Hit(damageInfo);
                 }
                 else if (collider.CompareTag("Barrel"))
                 {

@@ -221,17 +221,16 @@ public class PlayerGunFireAbility : MonoBehaviour
             IHitable hitObject = hitInfo.collider.GetComponent<IHitable>();
             if (hitObject != null)
             {
-                int damageFactor = 1;
-                if (hitInfo.collider.gameObject.CompareTag("Weakpoint"))
+                DamageInfo damageInfo = new DamageInfo(DamageType.Normal, CurrentGun.Damage);
+                damageInfo.Position = hitInfo.point;
+                damageInfo.Normal = hitInfo.normal;
+
+                if (Random.Range(0,2) == 0)
                 {
-                    damageFactor = 5;
-                    Debug.Log("Weakpoint");
+                    damageInfo.DamageType = DamageType.Critical;
+                    Debug.Log("Critical");
                 }
-                else
-                {
-                    damageFactor = 1;
-                }
-                hitObject.Hit(CurrentGun.Damage * damageFactor);
+                hitObject.Hit(damageInfo);
             }
 
             HitEffect.gameObject.transform.position = hitInfo.point;

@@ -10,6 +10,7 @@ public enum GameState
 {
     Ready, // 대기
     Go, // 시작
+    Pause,
     Over,  // 게임오버
 
 
@@ -20,7 +21,7 @@ public class Gamemanager : MonoBehaviour
     public static Gamemanager Instance { get; private set; }
     public GameState State { get; private set; } = GameState.Ready;
     public TextMeshProUGUI StateTextUI;
-
+    public UI_OptionPopup OptionUI;
     // 게임 상태
     // 1. 게임 준비 상태
     // 2. 1.6초 후에 게임 시작 상태
@@ -42,7 +43,10 @@ public class Gamemanager : MonoBehaviour
     }
     private void Start()
     {
+        
         StartCoroutine(Start_Coroutine());
+        //OptionUI.Open();
+
 
     }
 
@@ -67,7 +71,12 @@ public class Gamemanager : MonoBehaviour
          Refresh();
     }
     
+    public void OnOptionButtonClicked()
+    {
+        Pause();
+        OptionUI.gameObject.SetActive(true);
 
+    }
    
     public void Refresh()
     {
@@ -93,5 +102,17 @@ public class Gamemanager : MonoBehaviour
         }
     }
 
+    public void Pause()
+    {
+        State = GameState.Pause;
+        Time.timeScale = 0f;
+
+    }
+    public void Continue()
+    {
+        State = GameState.Go;
+        Time.timeScale = 1f;
+
+    }
 
 }

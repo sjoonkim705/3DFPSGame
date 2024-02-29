@@ -29,7 +29,7 @@ public class Monster : MonoBehaviour, IHitable
     private NavMeshAgent _navMeshAgent;
     private Animator _animator;
 
-
+    public GameObject BloodPrefab;
 
     private Transform _target;         // 플레이어
     public float FindDistance = 5f;  // 감지 거리
@@ -279,7 +279,8 @@ public class Monster : MonoBehaviour, IHitable
             IHitable playerHitable = _target.GetComponent<IHitable>();
             if (playerHitable != null)
             {
-                playerHitable.Hit(Damage);
+                DamageInfo damageInfo = new DamageInfo();
+                playerHitable.Hit(damageInfo);
                 _animator.SetTrigger("Attack");
                 _attackTimer = 0f;
             }
@@ -292,7 +293,8 @@ public class Monster : MonoBehaviour, IHitable
         IHitable playerHitable = _target.GetComponent<IHitable>();
         if (playerHitable != null)
         {
-            playerHitable.Hit(Damage);
+            DamageInfo damageInfo = new DamageInfo(DamageType.Normal, Damage);
+            playerHitable.Hit(damageInfo);
             _animator.SetTrigger("Attack");
             _attackTimer = 0f;
         }
@@ -330,14 +332,22 @@ public class Monster : MonoBehaviour, IHitable
         }
     }
 
-    public void Hit(int damage)
+    public void Hit(DamageInfo damage)
     {
         if (_currentState == MonsterState.Die)
         {
             return;
         }
 
-        Health -= damage;
+        Health -= damage.Amount;
+        // Todo 데미지 타입이 크리티컬이면 피흘리기
+        if (damage.DamageType == DamageType.Critical)
+        {
+            /*            GameObject bloodObject = Instantiate(BloodPrefab);
+                        bloodObject.transform.position = damage.Position;
+                        bloodObject.transform.forward = damage.Normal;*/
+            BloodFactory.Instance.Make(damage.Position, damage.Normal);
+        }
         if (Health <= 0)
         {
             Debug.Log("상태 전환: Any -> Die");
