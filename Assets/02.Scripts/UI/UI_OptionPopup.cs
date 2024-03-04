@@ -34,6 +34,12 @@ public class UI_OptionPopup : MonoBehaviour
     }
     public void OnClickedQuitButton()
     {
-        UnityEditor.EditorApplication.isPlaying = false;
+        
+        Application.Quit(); // 빌드 후 실행했을 경우 종료하는 방법
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false; // 유니티 에디터에서 실행했을 경우
+#endif
+
     }
 }
