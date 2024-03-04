@@ -29,6 +29,7 @@ public class UI_OptionPopup : MonoBehaviour
     {
 
         SceneManager.LoadScene("SampleScene");
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         Gamemanager.Instance.Continue();
 
     }
